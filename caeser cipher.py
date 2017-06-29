@@ -1,13 +1,21 @@
 #Caeser Cipher Encryption/Decryption
 
 def getKey(): #gets key size from user
-    key = int(input('Enter the key value:'))
+    key = ""
+    x = True
+    while x == True: #loop to try collect key until a valid integer is inputted
+        try:
+            key = int(input('Enter the key value:')) #collects key
+        except ValueError: #skips valueerror if key is not an integer, tries again
+            print("That's isn't an integer, try again!")
+        else:
+            x = False
     if key > 26: #ensures key is not bigger than the amount of characters in the alphabet
         print('Key size too big. Please try again.')
         getKey()
     return key #returns key as variable when function is called
 
-def translate(phrase, key): #Hi
+def translate(phrase, key): #main function for encrypting or decrypting text
     cipher = "" #initializes cipher
     for cipherText in phrase: #loops for each character in 'phrase'
         cipherVal = ord(cipherText) + key #converts each character into a numeric value and shifts it up based on the key
@@ -22,23 +30,26 @@ def translate(phrase, key): #Hi
 def encrypt(): #encryption function
     key = getKey() #assigns key variable from getKey() function
     phrase = input('Enter the cipher text or plain text:') #get plain text to encrypt
-    cipher = translate(phrase, key)
+    cipher = translate(phrase, key) #runs translate function to get final plain text/cipher text
     print(cipher)
 
 def decrypt(): #decryption function
     key = getKey() #assigns key variable from getKey() function
     phrase = input('Enter the cipher text or plain text:') #get cipher text to decrypt
-    cipher = translate(phrase, -key)
+    cipher = translate(phrase, -key) #runs translate function to get final plain text/cipher text
     print(cipher)
 
 def caeser(): #main function, collects whether to encrypt or decrypt a phrase from the user and runs the appropriate function
     command = input('Do you wish to (e)ncrypt or (d)ecrypt a cipher?')
-    if command == 'd':
-        decrypt()
-    elif command == 'e':
-        encrypt()
-    else:
-        print('Invalid selection, please try again.')
-        caeser()
+    x = True
+    while x == True:
+        if command == 'd':
+            decrypt()
+            x = False
+        elif command == 'e':
+            encrypt()
+            x = False
+        else:
+            print('Invalid selection, please try again.')
 
 caeser()
