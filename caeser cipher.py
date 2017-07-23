@@ -1,55 +1,58 @@
-#Caeser Cipher Encryption/Decryption
+# Caesar encryption/decryption
 
-def getKey(): #gets key size from user
-    key = ""
-    x = True
-    while x == True: #loop to try collect key until a valid integer is inputted
+### Returns string which contains only letters
+def input_phrase():
+    phrase = ' '
+    while not phrase.isalpha():
+        phrase = input('Enter the text: ')
+        if not phrase.isalpha():
+            print('Phrase contains non-letter symbols. Please try again.')
+    return phrase
+
+### Returns integer key in range of (0..25)
+def input_key():
+    keys = range(26)
+    key = 26
+    while key not in keys:
         try:
-            key = int(input('Enter the key value:')) #collects key
-        except ValueError: #skips valueerror if key is not an integer, tries again
+            key = int(input('Enter the key value (0..25): '))
+            if key not in keys:
+                print('Key is not in (0..25). Please try again.')
+        except ValueError:
             print("That's isn't an integer, try again!")
-        else:
-            x = False
-    if key > 26: #ensures key is not bigger than the amount of characters in the alphabet
-        print('Key size too big. Please try again.')
-        getKey()
-    return key #returns key as variable when function is called
+            key = 26
+    return key
 
-def translate(phrase, key): #main function for encrypting or decrypting text
-    cipher = "" #initializes cipher
-    for cipherText in phrase: #loops for each character in 'phrase'
-        cipherVal = ord(cipherText) + key #converts each character into a numeric value and shifts it up based on the key
-        if cipherVal > ord('z'): #ensures values reset if they are greater than the numeric value of z
-            cipherVal -= 26
-        elif cipherVal < ord('a'): #ensures values reset if they are less than the numeric value of z
-            cipherVal += 26
-        cipherChar = chr(cipherVal) #converts the encrypted numeric values back to their now encrypted characters
-        cipher += cipherChar #creates a string based on the characters
-    return cipher
+### Returns a 'char' encoded with 'key'
+def encoded(char, key):
+    return chr(ord('a') + (ord(char) - ord('a') + key) % 26)
 
-def encrypt(): #encryption function
-    key = getKey() #assigns key variable from getKey() function
-    phrase = input('Enter the cipher text or plain text:') #get plain text to encrypt
-    cipher = translate(phrase, key) #runs translate function to get final plain text/cipher text
-    print(cipher)
+### Returns a 'phrase' encoded with 'key'
+def translate(phrase, key):
+    return ''.join([encoded(char, key) for char in phrase])
 
-def decrypt(): #decryption function
-    key = getKey() #assigns key variable from getKey() function
-    phrase = input('Enter the cipher text or plain text:') #get cipher text to decrypt
-    cipher = translate(phrase, -key) #runs translate function to get final plain text/cipher text
-    print(cipher)
+### Encryption function
+def encrypt(phrase, key):
+    return translate(phrase, key)
 
-def caeser(): #main function, collects whether to encrypt or decrypt a phrase from the user and runs the appropriate function
-    command = input('Do you wish to (e)ncrypt or (d)ecrypt a cipher?')
-    x = True
-    while x == True:
-        if command == 'd':
-            decrypt()
-            x = False
-        elif command == 'e':
-            encrypt()
-            x = False
-        else:
+### Decryption function
+def decrypt(phrase, key):
+    return translate(phrase, -key)
+
+def main():
+    cmds = {'e': encrypt, 'd': decrypt}
+    cmd = ''
+    while cmd not in cmds:
+        cmd = input('Do you wish to (e)ncrypt or (d)ecrypt a cipher? ')
+        cmd = cmd.lower()
+        if cmd not in cmds:
             print('Invalid selection, please try again.')
 
-caeser()
+    phrase_type = 'plain' if cmd == 'e' else 'cipher'
+    phrase, key = input_phrase().lower(), input_key()
+    result = cmds[cmd](phrase, key)
+    print(result)
+    input()
+
+if __name__ == '__main__':
+    main()
